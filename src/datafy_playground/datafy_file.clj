@@ -1,4 +1,9 @@
 (ns datafy-playground.datafy-file
+  "A very basic datafy/nav example
+  Resources for understanding this:
+  * Stuart Halloway's talk https://www.youtube.com/watch?v=c52QhiXsmyI&feature=youtu.be&t=1
+  * Sean Corfield's blog post on datafy http://corfield.org/blog/2018/12/03/datafy-nav/
+  "
   (:require [clojure.core.protocols :as p]
             [clojure.datafy :refer [datafy nav]]
             [clojure.java.io :as io]
