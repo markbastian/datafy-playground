@@ -22,9 +22,9 @@
 (defn file-nav [{:keys [parent absolute-path files] :as file-data} k v]
   (case k
     ;Navigate up to a parent
-    :parent (file->data (io/file parent))                   ;Should I datafy on the fly?
+    :parent (datafy (file->data (io/file parent)))          ;Should I datafy on the fly?
     ;Navigate down to children (only works if a directory)
-    :files (file->data (get files v))                       ;Should I datafy on the fly?
+    :files (datafy (file->data (get files v)))              ;Should I datafy on the fly?
     :data (with-open [rdr (io/reader (io/file absolute-path))]
             (file-contents->data rdr v))
     v))
@@ -53,11 +53,23 @@
   (-> (io/file ".")
       datafy
       (nav :parent nil)
-      datafy
       ;Question 2: Is this "normal" nav usage or should I do (get-in [:files 0])
       (nav :files 0)
-      datafy
       :name)
+
+  (-> (io/file ".")
+      file->data
+      (nav :parent nil)
+      ;Question 2: Is this "normal" nav usage or should I do (get-in [:files 0])
+      (nav :files 1)
+      :name)
+
+  (-> (io/file ".")
+      file->data
+      (nav :parent nil)
+      ;Question 2: Is this "normal" nav usage or should I do (get-in [:files 0])
+      (nav :files 1)
+      (nav :data :raw))
 
   (-> (io/file "project.clj")
       datafy
