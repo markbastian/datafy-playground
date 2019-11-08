@@ -10,13 +10,15 @@
 
 (comment
   (with-open [c (jdbc/get-connection {:dbtype "h2" :dbname "mem:test_mem1"})]
-    (jdbc/execute! c ["DROP TABLE PERSON"])
+    (jdbc/execute! c ["DROP TABLE PERSON IF EXISTS"])
     (jdbc/execute! c ["CREATE TABLE person (id int not null primary key, name varchar(32), spouseid int)"])
     (let [k (keys (first people))]
       (sql/insert-multi! c :person k (map #(map % k) people)))
-    (let [[res] (jdbc/execute! c ["SELECT * FROM PERSON WHERE name='Richard Parker'"])]
+    (let [[res] (jdbc/execute!
+                  c
+                  ["SELECT * FROM PERSON WHERE name='Richard Parker'"]
+                  {:schema {:person/spouseid :person/id}})]
       (-> res
-          (rs/datafiable-row c {:schema {:person/spouseid :person/id}})
           datafy
           (nav :person/spouseid 2))))
   )
